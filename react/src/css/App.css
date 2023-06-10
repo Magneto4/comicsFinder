@@ -1,0 +1,13 @@
+.app {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	min-height: 100%;
+	/* background-color: rgb(88, 8, 8); */
+	font-family: 'Courier New', Courier, monospace;
+	background-image: url("../imgs/wp8041844.jpg");
+	background-attachment: fixed;
+	background-size: cover;
+	background-position: center;
+}
