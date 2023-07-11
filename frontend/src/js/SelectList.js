@@ -24,29 +24,10 @@ export default function SelectList (props) {
 		getListFromWiki(props.category, setList);
 	}
 
-	function redoList(value) {
-		var menu = document.getElementById("search-results-" + props.name);
-		menu.innerHTML = "";
-		if (value.length === 0)
-		return ;
-		let i = 0;
-		for (let el of list) {
-			if (el.toLowerCase().includes(value.toLowerCase())) {
-				var div = document.createElement('div');
-				div.innerHTML = div.innerHTML + el;
-				div.setAttribute('class', "search-results-item");
-				div.setAttribute('id', i++);
-				div.onclick = function (event) {onItemClick(event, el)};
-				menu.insertAdjacentElement('beforeend', div);
-			}
-		}
-	}
-	
 	const onSearch = (e) => {
 		newSelectedValue = selectedValue;
 		setSearchValue(e.target.value);
 		setOnValue(-1);
-		redoList(e.target.value);
     };
 	
 	function onItemClick (event, option) {
@@ -58,7 +39,6 @@ export default function SelectList (props) {
 		setOnValue(-1);
 		setSearchValue("");
 		setSelectedValue(newSelectedValue);
-		redoList("");
 	}
 
 	function getDisplay() {
@@ -120,6 +100,32 @@ export default function SelectList (props) {
 		setOnValue(newValue);
 	}
 
+	function Results () {
+		if (searchValue.length === 0) {
+			return <></>;
+		}
+		function condition (el) {
+			const re = RegExp(`.*${searchValue.toLowerCase().split('').join('.*')}.*`)
+			return (el.toLowerCase().match(re))
+		}
+		return (
+			<div
+				className="search-results"
+				id={"search-results-" + props.name}
+			>
+				{list.filter(el => condition(el)).map((el, index) => (
+					<div
+						className="search-results-item"
+						id={index}
+						onclick={function (event) {onItemClick(event, el)}}
+					>
+					{el}
+					</div>
+				))}
+			</div>
+		)
+	}
+
 	return (
 		<div className="search-list">
 			<div className="list-title">
@@ -134,11 +140,7 @@ export default function SelectList (props) {
 				value={searchValue}
 				onKeyDown={keyDown}
 			/>
-			<div
-				className="search-results"
-				id={"search-results-" + props.name}
-			>
-			</div>
+			<Results/>
 		</div>
 	)
 }
