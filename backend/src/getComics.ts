@@ -2,13 +2,13 @@ const axios = require("axios");
 const cheerio = require("cheerio"); 
 
 class Request {
-	characters: string;
-	writers: string;
-	pencilers: string;
-	inkers: string;
-	colorists: string;
-	letterers: string;
-	editors: string;
+	characters: string[];
+	writers: string[];
+	pencilers: string[];
+	inkers: string[];
+	colorists: string[];
+	letterers: string[];
+	editors: string[];
 }
 
 async function getCharComics(char:string, type:string)
@@ -18,7 +18,6 @@ async function getCharComics(char:string, type:string)
 	
 	while (1)
 	{
-		console.log(URL);
 		const	html = await axios.get(URL)
 		.catch((err) => {
 			console.log("Missing data");
@@ -49,13 +48,12 @@ async function getCharComics(char:string, type:string)
 	return comics;
 }
 
-async function splitAndGetComics(names:string, type:string)
+async function getComicsList(names:string[], type:string)
 {
 	var	allSets:Array<Set<string>> = [];
 	var set:Set<string>;
 
-	var namesArray:string[] = names.split(",");
-	for (var name of namesArray) {
+	for (var name of names) {
 		set = await getCharComics(name, type);
 		if (set.size == 0) {
 			return [];
@@ -78,50 +76,50 @@ export default async function getComics(request:Request) {
 	var	allSets:Array<Set<string>> = [];
 	var sets:Array<Set<string>> = [];
 	
-	if (request.characters != "") {
-		sets = await splitAndGetComics(request.characters, "Appearances");
+	if (request.characters.length != 0) {
+		sets = await getComicsList(request.characters, "Appearances");
 		if (sets.length == 0) {
 			return "Data missing";
 		}
 		allSets = allSets.concat(sets);
 	}
-	if (request.writers != "") {
-		sets = await splitAndGetComics(request.writers, "Writer");
+	if (request.writers.length != 0) {
+		sets = await getComicsList(request.writers, "Writer");
 		if (sets.length == 0) {
 			return "Data missing";
 		}
 		allSets = allSets.concat(sets);
 	}
-	if (request.pencilers != "") {
-		sets = await splitAndGetComics(request.pencilers, "Penciler");
+	if (request.pencilers.length != 0) {
+		sets = await getComicsList(request.pencilers, "Penciler");
 		if (sets.length == 0) {
 			return "Data missing";
 		}
 		allSets = allSets.concat(sets);
 	}
-	if (request.inkers != "") {
-		sets = await splitAndGetComics(request.inkers, "Inker");
+	if (request.inkers.length != 0) {
+		sets = await getComicsList(request.inkers, "Inker");
 		if (sets.length == 0) {
 			return "Data missing";
 		}
 		allSets = allSets.concat(sets);
 	}
-	if (request.colorists != "") {
-		sets = await splitAndGetComics(request.colorists, "Colorist");
+	if (request.colorists.length != 0) {
+		sets = await getComicsList(request.colorists, "Colorist");
 		if (sets.length == 0) {
 			return "Data missing";
 		}
 		allSets = allSets.concat(sets);
 	}
-	if (request.letterers != "") {
-		sets = await splitAndGetComics(request.letterers, "Letterer");
+	if (request.letterers.length != 0) {
+		sets = await getComicsList(request.letterers, "Letterer");
 		if (sets.length == 0) {
 			return "Data missing";
 		}
 		allSets = allSets.concat(sets);
 	}
-	if (request.editors != "") {
-		sets = await splitAndGetComics(request.editors, "Editor");
+	if (request.editors.length != 0) {
+		sets = await getComicsList(request.editors, "Editor");
 		if (sets.length == 0) {
 			return "Data missing";
 		}
@@ -133,10 +131,6 @@ export default async function getComics(request:Request) {
 	for (let i = 1; i < allSets.length; i++) {
 		 intersect(finalSet, allSets[i]);
 	}
-	var results:string = "";
-	for (var comic of finalSet) {
-		results += comic + ",";
-	}
-	results = results.slice(0, -1);
-	return results;
+	
+	return (Array.from(finalSet));
 }

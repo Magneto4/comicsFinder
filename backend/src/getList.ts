@@ -1,22 +1,22 @@
 const cheerio = require('cheerio');
 const axios = require('axios');
 
-class namedSet {
+class namedArray {
 	name: string;
-	set: Set<string>
+	array: Array<string>
 }
 
-const	sets:Array<namedSet> = [];
+const	arrays:Array<namedArray> = [];
 
 export default async function getList(category:string) {
-	let	nameSet = new Set<string>();
+	let	nameArray = new Array<string>();
 	let URL = "https://marvel.fandom.com/wiki/Category:" + category;
 	let exists = false;
 
-	for (var set of sets) {
-		if (set.name == category) {
+	for (var array of arrays) {
+		if (array.name == category) {
 			exists = true;
-			nameSet = set.set;
+			nameArray = array.array;
 		}
 	}
 	if (exists == false) {
@@ -26,11 +26,10 @@ export default async function getList(category:string) {
 		});
 		while (1)
 		{
-			sets.push({
+			arrays.push({
 				name:category,
-				set:nameSet
+				array:nameArray
 			});
-			console.log(URL);
 			var	html = await axios.get(URL)
 			.catch(function (error) {
 				console.log(error);
@@ -38,8 +37,8 @@ export default async function getList(category:string) {
 			const $ = cheerio.load(html.data);
 			const list = $("a.category-page__member-link");
 			list.each(function (i, elem) {
-				if (!$(elem).text().startsWith("Category:"))
-					nameSet.add($(elem).text())
+				if (!$(elem).text().startsWith("Category:") && $(elem).text() != "Character Index")
+					nameArray.push($(elem).text())
 			})
 			const next = $("div.category-page__pagination");
 			if (next.length == 0)
@@ -57,11 +56,6 @@ export default async function getList(category:string) {
 			if (!isNext)
 				break ;
 		}
-		nameSet.delete("Character Index");
 	}
-	let names = "";
-	for (let name of nameSet) {
-		names += name + ",";
-	}
-	return names;
+	return nameArray;
 }

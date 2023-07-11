@@ -14,12 +14,15 @@ const CloseIcon = () => {
 
 
 export default function SelectList (props) {
-	const list = [];
+	const [list, setList] = useState([]);
 	const [selectedValue, setSelectedValue] = useState([]);
 	const [searchValue, setSearchValue] = useState("");
 	const [onValue, setOnValue] = useState(-1);
-	getListFromWiki(props.category, list);
 	let newSelectedValue = [];
+	
+	if (list.length === 0) {
+		getListFromWiki(props.category, setList);
+	}
 
 	function redoList(value) {
 		var menu = document.getElementById("search-results-" + props.name);
@@ -62,11 +65,11 @@ export default function SelectList (props) {
 		if (selectedValue.length === 0)
 			return "";
 		return (
-			<div class="search-tags" id={"search-tags-" + props.name}>
+			<div className="search-tags" id={"search-tags-" + props.name}>
                 {selectedValue.map((option) => (
-                    <div class="search-tag-item">
+                    <div className="search-tag-item">
                         {option}
-                        <span onClick={(e) => onTagRemove(e, option)} class="search-tag-close"><CloseIcon /></span>
+                        <span onClick={(e) => onTagRemove(e, option)} className="search-tag-close"><CloseIcon /></span>
                     </div>
                 ))}
             </div>
@@ -118,21 +121,21 @@ export default function SelectList (props) {
 	}
 
 	return (
-		<div class="search-list">
-			<div class="list-title">
+		<div className="search-list">
+			<div className="list-title">
 				<h4>{props.name + ":"}</h4>
 			</div>
-			<div class="search-selected-values">
+			<div className="search-selected-values">
 				{getDisplay(selectedValue)}
 			</div>
 			<input
-				class="search-bar"
+				className="search-bar"
 				onChange={onSearch}
 				value={searchValue}
 				onKeyDown={keyDown}
 			/>
 			<div
-				class="search-results"
+				className="search-results"
 				id={"search-results-" + props.name}
 			>
 			</div>

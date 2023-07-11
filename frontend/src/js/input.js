@@ -7,18 +7,14 @@ import { useState } from 'react';
 export default function UserInput() {
 	const [comicsList, setComicsList] = useState([]);
 
-	function convertToString(formSection) {
+	function convertToArray(formSection) {
 		if (formSection == null) {
-			return "";
+			return [];
 		}
 		let elements = formSection.getElementsByClassName('search-tag-item');
-		let stringList = "";
-
+		let stringList = [];
 		for (var i = 0; i < elements.length; i++) {
-			stringList += elements[i].textContent;
-			if (i < elements.length - 1) {
-				stringList += ',';
-			}
+			stringList.push(elements[i].textContent);
 		}
 		return stringList;
 	}
@@ -27,18 +23,18 @@ export default function UserInput() {
 		event.preventDefault();
 
 		var	body = {
-			characters: convertToString(document.getElementById('search-tags-characters')),
-			writers: convertToString(document.getElementById('search-tags-writers')),
-			pencilers: convertToString(document.getElementById('search-tags-pencilers')),
-			inkers: convertToString(document.getElementById('search-tags-inkers')),
-			colorists: convertToString(document.getElementById('search-tags-colorists')),
-			letterers: convertToString(document.getElementById('search-tags-letterers')),
-			editors: convertToString(document.getElementById('search-tags-editors'))
+			characters: convertToArray(document.getElementById('search-tags-characters')),
+			writers: convertToArray(document.getElementById('search-tags-writers')),
+			pencilers: convertToArray(document.getElementById('search-tags-pencilers')),
+			inkers: convertToArray(document.getElementById('search-tags-inkers')),
+			colorists: convertToArray(document.getElementById('search-tags-colorists')),
+			letterers: convertToArray(document.getElementById('search-tags-letterers')),
+			editors: convertToArray(document.getElementById('search-tags-editors'))
 		};
 		setComicsList(["loading"]);
-		axios.post('http://127.0.0.1:8000/appearances', body)
+		axios.post('http://localhost:5000/appearances', body)
 		.then(function (response) {
-			setComicsList(response.data.split(","));
+			setComicsList(response.data);
 		})
 		.catch(function (error) {
 			console.log(error);
@@ -49,13 +45,13 @@ export default function UserInput() {
 		if (comicsList.length === 0)
 			return "";
 		if (comicsList.length === 1 && comicsList[0] === "loading")
-			return (<div class="loading">loading...</div>);
+			return (<div className="loading">loading...</div>);
 		return (
-			<div class="results">
-				<h4 class="results-title">Comics:</h4>
+			<div className="results">
+				<h4 className="results-title">Comics:</h4>
 				<ul>
 					{comicsList.map((option) => (
-						<li class="result-item" id={option}>
+						<li className="result-item" id={option}>
 							{option}
 						</li>
 					))}
@@ -66,8 +62,8 @@ export default function UserInput() {
 	}
 
 	return (
-		<div class='form'>
-			<div class="questions">
+		<div className='form'>
+			<div className="questions">
 				<form name="input" onSubmit={handleSubmit}>
 					<SelectList name="characters" category="Characters"/>
 					<SelectList name="writers" category="Marvel_Staff/Writers"/>
@@ -76,12 +72,12 @@ export default function UserInput() {
 					<SelectList name="colorists" category="Marvel_Staff/Colorists"/>
 					<SelectList name="letterers" category="Marvel_Staff/Letterers"/>
 					<SelectList name="editors" category="Marvel_Staff/Editors"/>
-					<div id='submit' class="submit">
-						<input class="submit-button" type="submit" value="Get comic book list"/>
+					<div id='submit' className="submit">
+						<input className="submit-button" type="submit" value="Get comic book list"/>
 					</div>
 				</form>
 			</div>
-			<div class="result-section">
+			<div className="result-section">
 				{getResults()}
 			</div>
 		</div>

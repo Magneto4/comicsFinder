@@ -6,7 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const cors = require("cors");
   app.use(cors({
-	origin: 'http://localhost:5000'
+	origin: 'http://localhost:3000'
   }));
   getList("Characters");
   getList("Marvel_Staff/Writers");
@@ -15,6 +15,6 @@ async function bootstrap() {
   getList("Marvel_Staff/Colorists");
   getList("Marvel_Staff/Letterers");
   getList("Marvel_Staff/Editors");
-  await app.listen(8000);
+  await app.listen(5000);
 }
 bootstrap();
